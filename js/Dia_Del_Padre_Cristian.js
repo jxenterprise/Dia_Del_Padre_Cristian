@@ -167,4 +167,44 @@
       resizeT = setTimeout(size, 200);
     });
   }
+
+  /* ------------------ 6. AUDIO DE FONDO --------------------- */
+  const bgMusic = document.getElementById("bgMusic");
+  const musicBtn = document.getElementById("musicBtn");
+
+  if (bgMusic) {
+    bgMusic.volume = 0.5;
+
+    const tryPlay = () => bgMusic.play().catch(() => {});
+
+    // Intentar autoplay al cargar
+    window.addEventListener("load", tryPlay);
+
+    // Si el navegador bloquea el autoplay, activar en primera interacción
+    const unlockAudio = () => {
+      tryPlay();
+      document.removeEventListener("click", unlockAudio);
+      document.removeEventListener("keydown", unlockAudio);
+      document.removeEventListener("touchstart", unlockAudio);
+    };
+    document.addEventListener("click", unlockAudio);
+    document.addEventListener("keydown", unlockAudio);
+    document.addEventListener("touchstart", unlockAudio, { passive: true });
+
+    // Botón mute/unmute
+    if (musicBtn) {
+      musicBtn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        if (bgMusic.paused) {
+          bgMusic.play();
+          musicBtn.classList.remove("is-muted");
+          musicBtn.setAttribute("aria-label", "Silenciar música");
+        } else {
+          bgMusic.pause();
+          musicBtn.classList.add("is-muted");
+          musicBtn.setAttribute("aria-label", "Reanudar música");
+        }
+      });
+    }
+  }
 })();
