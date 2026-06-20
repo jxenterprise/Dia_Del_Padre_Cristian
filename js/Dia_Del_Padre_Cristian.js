@@ -192,15 +192,15 @@
       return {
         x:     (Math.random() * (rw + rh)) - rh * sinA,
         y:     Math.random() * rh,
-        len:   (Math.random() * 14 + 8) * rdpr,
+        len:   (Math.random() * 18 + 12) * rdpr,
         speed: (Math.random() * 9 + 7) * rdpr,
-        a:     Math.random() * 0.13 + 0.04,
+        a:     Math.random() * 0.35 + 0.15,
       };
     }
 
     function rTick() {
       rctx.clearRect(0, 0, rw, rh);
-      rctx.lineWidth = rdpr * 0.6;
+      rctx.lineWidth = rdpr * 1.4;
 
       for (const d of drops) {
         d.x += sinA * d.speed;
