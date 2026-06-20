@@ -1,0 +1,671 @@
+/* =================================================================
+   FELIZ DÍA DEL PADRE · CRISTIAN
+   Estética: Silent Hill 2 Remake — niebla, frío, calle mojada.
+   Mobile-first. Editable en VS Code.
+   -----------------------------------------------------------------
+   ÍNDICE
+   1.  Variables (tokens de color, tipografía, espaciado)
+   2.  Reset base
+   3.  Capas globales (grano, linterna, ceniza, loader)
+   4.  Utilidades (wrap, eyebrow, reveal)
+   5.  Hero
+   6.  Intro
+   7.  Cartas
+   8.  Monumento final
+   9.  Pie
+   10. Responsive (breakpoints)
+   11. Accesibilidad (reduced motion / focus)
+================================================================= */
+
+/* ============================ 1. VARIABLES ====================== */
+:root {
+  /* Paleta — negros fríos + niebla + acento óxido muy sutil */
+  --void:   #090b0c;   /* fondo casi negro, frío            */
+  --smoke:  #14181b;   /* panel ligeramente levantado       */
+  --ash:    #1c2226;   /* bordes / placas                   */
+  --fog:    #cdd4d5;   /* texto principal (niebla clara)    */
+  --steel:  #828d91;   /* texto secundario / apagado        */
+  --steel-dim: #525c60;/* texto terciario                   */
+  --rust:   #9a4a3a;   /* acento óxido/sangre (muy poco)    */
+  --moss:   #5b6650;   /* verde oliva de la chaqueta        */
+
+  /* Tipografía */
+  --f-display: "Cinzel", Georgia, serif;       /* títulos solemnes  */
+  --f-body:    "Spectral", Georgia, serif;      /* cartas íntimas    */
+  --f-mono:    "Special Elite", "Courier New", monospace; /* etiquetas */
+
+  /* Escala fluida */
+  --step--1: clamp(0.78rem, 0.72rem + 0.3vw, 0.9rem);
+  --step-0:  clamp(1rem, 0.94rem + 0.3vw, 1.18rem);
+  --step-1:  clamp(1.2rem, 1.05rem + 0.7vw, 1.6rem);
+  --step-2:  clamp(1.6rem, 1.3rem + 1.4vw, 2.6rem);
+  --step-3:  clamp(2.2rem, 1.6rem + 3vw, 4.4rem);
+  --step-4:  clamp(3rem, 1.8rem + 6vw, 9rem);
+
+  /* Ritmo vertical */
+  --space-section: clamp(5rem, 4rem + 8vw, 11rem);
+
+  /* Otros */
+  --ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --measure: 62ch;
+}
+
+/* ============================ 2. RESET ========================== */
+*,
+*::before,
+*::after { box-sizing: border-box; }
+
+* { margin: 0; padding: 0; }
+
+html {
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  font-family: var(--f-body);
+  font-size: var(--step-0);
+  line-height: 1.7;
+  color: var(--fog);
+  background: var(--void);
+  overflow-x: hidden;
+  /* Degradado base que recuerda al cielo de niebla bajando */
+  background-image:
+    radial-gradient(120% 90% at 50% -10%, #1a2024 0%, var(--void) 55%);
+  background-attachment: fixed;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+}
+
+img { display: block; max-width: 100%; }
+
+a { color: inherit; text-decoration: none; }
+
+::selection { background: rgba(154, 74, 58, 0.4); color: #fff; }
+
+/* Barra de scroll a tono */
+::-webkit-scrollbar { width: 10px; }
+::-webkit-scrollbar-track { background: var(--void); }
+::-webkit-scrollbar-thumb {
+  background: #2a3236;
+  border-radius: 0;
+  border: 2px solid var(--void);
+}
+::-webkit-scrollbar-thumb:hover { background: #3a444a; }
+
+/* ======================= 3. CAPAS GLOBALES ===================== */
+
+/* — Grano de película — */
+.grain {
+  position: fixed;
+  inset: 0;
+  z-index: 9000;
+  pointer-events: none;
+  opacity: 0.05;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  animation: grainShift 0.6s steps(2) infinite;
+}
+@keyframes grainShift {
+  0% { transform: translate(0, 0); }
+  100% { transform: translate(-4%, 3%); }
+}
+
+/* — Linterna que sigue al cursor (solo escritorio) — */
+.flashlight {
+  position: fixed;
+  inset: 0;
+  z-index: 8500;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.6s ease;
+  background: radial-gradient(
+    220px circle at var(--mx, 50%) var(--my, 50%),
+    rgba(205, 212, 213, 0.08),
+    transparent 60%
+  );
+  mix-blend-mode: screen;
+}
+
+/* — Ceniza flotando — */
+.ash {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  pointer-events: none;
+  opacity: 0.6;
+}
+
+/* — Loader — */
+.loader {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: grid;
+  place-items: center;
+  background: var(--void);
+  transition: opacity 1.1s ease, visibility 1.1s ease;
+}
+.loader.is-done { opacity: 0; visibility: hidden; }
+.loader__fog {
+  position: absolute;
+  inset: -20%;
+  background:
+    radial-gradient(40% 50% at 30% 40%, rgba(205,212,213,0.18), transparent 70%),
+    radial-gradient(45% 55% at 70% 60%, rgba(205,212,213,0.12), transparent 70%);
+  filter: blur(40px);
+  animation: loaderFog 6s ease-in-out infinite alternate;
+}
+@keyframes loaderFog {
+  from { transform: translate3d(-3%, 0, 0) scale(1.05); }
+  to   { transform: translate3d(3%, -2%, 0) scale(1.12); }
+}
+.loader__text {
+  position: relative;
+  font-family: var(--f-display);
+  font-weight: 600;
+  letter-spacing: 0.5em;
+  text-indent: 0.5em;
+  font-size: var(--step-1);
+  color: var(--steel);
+  text-transform: uppercase;
+  animation: loaderPulse 2.4s ease-in-out infinite;
+}
+@keyframes loaderPulse {
+  0%, 100% { opacity: 0.35; }
+  50% { opacity: 0.9; }
+}
+
+/* ========================= 4. UTILIDADES ====================== */
+.wrap {
+  width: min(100% - 2.5rem, 1100px);
+  margin-inline: auto;
+}
+
+.eyebrow {
+  font-family: var(--f-mono);
+  font-size: var(--step--1);
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  color: var(--steel);
+}
+
+/* Aparición al hacer scroll */
+.reveal {
+  opacity: 0;
+  transform: translateY(26px);
+  filter: blur(8px);
+  transition:
+    opacity 1.1s var(--ease),
+    transform 1.1s var(--ease),
+    filter 1.1s var(--ease);
+  transition-delay: calc(var(--d, 0) * 0.18s);
+}
+.reveal.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+  filter: blur(0);
+}
+
+/* ============================ 5. HERO =========================
+   Mobile-first = imagen completa como BANDA HORIZONTAL a todo el
+   ancho (así el título incrustado nunca se recorta).
+   En pantallas apaisadas pasa a modo inmersivo a pantalla completa.
+================================================================ */
+.hero {
+  position: relative;
+  min-height: 100svh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(1.4rem, 1rem + 4vw, 2.6rem);
+  padding: 9svh 1.25rem 11svh;
+  overflow: hidden;
+  isolation: isolate;
+  text-align: center;
+}
+
+.hero__media {
+  position: relative;
+  width: 100%;
+  max-width: 1120px;
+  line-height: 0;
+  isolation: isolate;
+}
+
+.hero__img {
+  width: 100%;
+  height: auto;
+  object-fit: contain;
+  filter: saturate(0.85) contrast(1.02) brightness(0.95);
+  box-shadow: 0 30px 80px -30px rgba(0,0,0,0.9);
+  will-change: transform;
+}
+
+/* Capas de niebla derivando sobre la imagen */
+.hero__fog {
+  position: absolute;
+  inset: -25%;
+  z-index: 1;
+  pointer-events: none;
+  background-repeat: repeat;
+}
+.hero__fog--1 {
+  background:
+    radial-gradient(60% 40% at 20% 80%, rgba(205,212,213,0.16), transparent 60%),
+    radial-gradient(50% 35% at 80% 70%, rgba(205,212,213,0.12), transparent 60%);
+  filter: blur(20px);
+  animation: drift1 26s ease-in-out infinite alternate;
+}
+.hero__fog--2 {
+  background:
+    radial-gradient(45% 30% at 50% 95%, rgba(205,212,213,0.18), transparent 65%);
+  filter: blur(26px);
+  animation: drift2 34s ease-in-out infinite alternate;
+}
+@keyframes drift1 {
+  from { transform: translate3d(-4%, 0, 0); }
+  to   { transform: translate3d(5%, -2%, 0); }
+}
+@keyframes drift2 {
+  from { transform: translate3d(3%, 1%, 0); }
+  to   { transform: translate3d(-5%, -3%, 0); }
+}
+
+.hero__vignette { display: none; }
+
+/* Contenido del hero */
+.hero__content {
+  position: relative;
+  z-index: 2;
+}
+.hero__content .eyebrow { margin-bottom: 1.1rem; }
+
+.hero__title {
+  font-family: var(--f-display);
+  line-height: 0.98;
+  font-size: var(--step-2);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--steel);
+  font-weight: 400;
+}
+.hero__name {
+  display: inline-block;
+  font-weight: 700;
+  font-size: var(--step-3);
+  letter-spacing: 0.04em;
+  color: #eef2f2;
+  text-shadow:
+    0 2px 30px rgba(0,0,0,0.7),
+    0 0 60px rgba(205,212,213,0.18);
+}
+
+.hero__for {
+  margin-top: 1.2rem;
+  font-family: var(--f-mono);
+  font-size: var(--step--1);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--steel-dim);
+}
+
+/* ---- MODO INMERSIVO · pantallas apaisadas ---- */
+@media (min-aspect-ratio: 1/1) {
+  .hero {
+    justify-content: flex-end;
+    padding: 0;
+    gap: 0;
+  }
+  .hero__media {
+    position: absolute;
+    inset: 0;
+    max-width: none;
+    z-index: -2;
+  }
+  .hero__img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center 32%;
+    transform: scale(1.06);
+    box-shadow: none;
+  }
+  .hero__fog { z-index: -1; }
+  .hero__vignette {
+    display: block;
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: linear-gradient(
+      to bottom,
+      rgba(9,11,12,0.3) 0%,
+      transparent 26%,
+      transparent 42%,
+      rgba(9,11,12,0.55) 74%,
+      var(--void) 100%
+    );
+  }
+  .hero__content {
+    padding: 0 1.25rem 8vh;
+  }
+  .hero__content::before {
+    content: "";
+    position: absolute;
+    left: 50%;
+    bottom: 4vh;
+    transform: translateX(-50%);
+    width: min(92vw, 720px);
+    height: 280%;
+    z-index: -1;
+    background: radial-gradient(60% 58% at 50% 72%, rgba(9,11,12,0.72), transparent 72%);
+    filter: blur(12px);
+    pointer-events: none;
+  }
+  .hero__content .eyebrow,
+  .hero__for {
+    text-shadow: 0 2px 14px rgba(9,11,12,0.9);
+  }
+}
+
+/* Indicador de scroll */
+.scroll-cue {
+  position: absolute;
+  bottom: 2rem;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.6rem;
+  z-index: 3;
+  opacity: 0.7;
+  transition: opacity 0.4s ease;
+}
+.scroll-cue:hover { opacity: 1; }
+.scroll-cue__line {
+  width: 1px;
+  height: 46px;
+  background: linear-gradient(to bottom, transparent, var(--steel));
+  animation: cueDrop 2.4s ease-in-out infinite;
+}
+@keyframes cueDrop {
+  0%, 100% { transform: scaleY(0.5); transform-origin: top; opacity: 0.4; }
+  50% { transform: scaleY(1); opacity: 1; }
+}
+.scroll-cue__text {
+  font-family: var(--f-mono);
+  font-size: 0.62rem;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--steel-dim);
+}
+
+/* ============================ 6. INTRO ======================== */
+.intro {
+  padding-block: var(--space-section);
+  text-align: center;
+}
+.intro__lead {
+  font-family: var(--f-body);
+  font-weight: 300;
+  font-size: var(--step-2);
+  line-height: 1.55;
+  color: var(--fog);
+  max-width: 22ch;
+  margin-inline: auto;
+}
+.intro__sub {
+  margin-top: 1.8rem;
+  font-style: italic;
+  color: var(--steel);
+  font-size: var(--step-1);
+  max-width: 34ch;
+  margin-inline: auto;
+}
+
+/* ============================ 7. CARTAS ======================= */
+.letters {
+  padding-bottom: var(--space-section);
+  display: flex;
+  flex-direction: column;
+  gap: clamp(3.5rem, 2.5rem + 5vw, 7rem);
+}
+
+.letter {
+  width: min(100% - 2.5rem, 760px);
+  margin-inline: auto;
+}
+
+/* La "placa" — documento húmedo emergiendo de la niebla */
+.letter__plate {
+  position: relative;
+  padding: clamp(1.6rem, 1.1rem + 3vw, 3.2rem);
+  background:
+    linear-gradient(160deg, rgba(28,34,38,0.92), rgba(15,18,21,0.92));
+  border: 1px solid var(--ash);
+  border-top: 1px solid #2f383d;
+  box-shadow:
+    0 30px 60px -30px rgba(0,0,0,0.8),
+    inset 0 1px 0 rgba(205,212,213,0.05);
+  overflow: hidden;
+}
+/* Filo de luz superior que sangra al pasar el cursor */
+.letter__plate::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(205,212,213,0.5), transparent);
+  opacity: 0.35;
+  transition: opacity 0.6s ease;
+}
+.letter:hover .letter__plate::before { opacity: 0.9; }
+/* Borde óxido lateral, acento muy sutil */
+.letter__plate::after {
+  content: "";
+  position: absolute;
+  top: 12%; bottom: 12%; left: 0;
+  width: 2px;
+  background: linear-gradient(to bottom, transparent, var(--rust), transparent);
+  opacity: 0.5;
+}
+.letter--alt .letter__plate::after { left: auto; right: 0; }
+
+/* Encabezado tipo expediente */
+.letter__file {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.8rem;
+  margin-bottom: 1.8rem;
+  font-family: var(--f-mono);
+  font-size: var(--step--1);
+  text-transform: uppercase;
+}
+.letter__num { color: var(--rust); letter-spacing: 0.18em; }
+.letter__div { flex: 1; height: 1px; min-width: 24px; background: var(--ash); }
+.letter__who { color: var(--steel); letter-spacing: 0.16em; }
+
+.letter__body {
+  font-weight: 400;
+  font-size: var(--step-1);
+  line-height: 1.85;
+  color: #dde3e3;
+  max-width: var(--measure);
+}
+.letter__body + .letter__body { margin-top: 1.1rem; }
+
+.letter__sign {
+  margin-top: 2rem;
+  font-family: var(--f-display);
+  font-weight: 500;
+  font-size: var(--step-1);
+  letter-spacing: 0.08em;
+  color: var(--fog);
+  text-align: right;
+}
+
+/* ====================== 8. MONUMENTO FINAL =================== */
+.finale {
+  position: relative;
+  min-height: 100svh;
+  display: grid;
+  place-items: center;
+  text-align: center;
+  overflow: hidden;
+  isolation: isolate;
+  padding: var(--space-section) 1.25rem;
+}
+.finale__fog {
+  position: absolute;
+  inset: -30%;
+  z-index: -1;
+  background:
+    radial-gradient(50% 40% at 50% 80%, rgba(205,212,213,0.16), transparent 70%),
+    radial-gradient(40% 30% at 25% 30%, rgba(205,212,213,0.10), transparent 70%),
+    radial-gradient(40% 30% at 75% 40%, rgba(205,212,213,0.10), transparent 70%);
+  filter: blur(30px);
+  animation: drift2 40s ease-in-out infinite alternate;
+}
+.finale__inner { position: relative; }
+
+.finale__eyebrow {
+  font-family: var(--f-mono);
+  font-size: var(--step-0);
+  letter-spacing: 0.34em;
+  text-transform: uppercase;
+  color: var(--steel);
+  margin-bottom: clamp(1.5rem, 1rem + 2vw, 2.6rem);
+}
+
+.finale__title {
+  font-family: var(--f-display);
+  font-weight: 800;
+  text-transform: uppercase;
+  line-height: 0.92;
+  letter-spacing: 0.02em;
+  color: #eef2f2;
+}
+.finale__title span { display: block; }
+.finale__title span:nth-child(1),
+.finale__title span:nth-child(2) {
+  font-size: var(--step-3);
+  color: var(--steel);
+}
+.finale__name {
+  font-size: clamp(3.4rem, 1.5rem + 9vw, 12rem) !important;
+  color: #f3f6f6 !important;
+  text-shadow:
+    0 0 50px rgba(205,212,213,0.18),
+    0 4px 40px rgba(0,0,0,0.7);
+  margin-top: 0.1em;
+}
+
+.finale__from {
+  margin-top: clamp(2rem, 1.4rem + 2vw, 3.2rem);
+  font-family: var(--f-mono);
+  font-size: var(--step--1);
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+  color: var(--steel-dim);
+}
+
+/* Parpadeo de letrero fallando */
+.flicker.is-visible { animation: flicker 5s linear 1s infinite; }
+@keyframes flicker {
+  0%, 100% { opacity: 1; }
+  41% { opacity: 1; }
+  42% { opacity: 0.35; }
+  43% { opacity: 1; }
+  45% { opacity: 0.55; }
+  46% { opacity: 1; }
+  88% { opacity: 1; }
+  89% { opacity: 0.4; }
+  90% { opacity: 1; }
+}
+
+/* ============================ 9. PIE ========================= */
+.foot {
+  text-align: center;
+  padding: 3rem 1.25rem 4rem;
+  border-top: 1px solid var(--ash);
+}
+.foot__line {
+  font-family: var(--f-mono);
+  font-size: var(--step--1);
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--steel);
+}
+.foot__note {
+  margin-top: 0.8rem;
+  font-size: 0.72rem;
+  color: var(--steel-dim);
+  font-style: italic;
+}
+
+/* ========================= 10. RESPONSIVE ==================== */
+
+/* Pantallas muy pequeñas (<360px) — apretar un poco más */
+@media (max-width: 359px) {
+  :root { --measure: 90vw; }
+  .hero__content { padding-bottom: 10vh; }
+}
+
+/* Móvil grande / phablet */
+@media (min-width: 480px) {
+  .wrap { width: min(100% - 3rem, 1100px); }
+}
+
+/* Tablet vertical y superior */
+@media (min-width: 768px) {
+  body { line-height: 1.75; }
+  .letter__file { gap: 1.2rem; }
+}
+
+/* Escritorio */
+@media (min-width: 1024px) {
+  .hero__content { padding-bottom: 9vh; }
+  /* Las cartas alternan ligeramente su posición horizontal */
+  .letter { width: min(100% - 4rem, 760px); }
+  .letter--alt { margin-left: auto; margin-right: clamp(0px, 6vw, 120px); }
+  .letter:not(.letter--alt) { margin-left: clamp(0px, 6vw, 120px); margin-right: auto; }
+}
+
+/* Escritorio amplio */
+@media (min-width: 1536px) {
+  :root { --measure: 64ch; }
+}
+
+/* Pantallas en horizontal y bajitas (móvil acostado) */
+@media (max-height: 520px) and (orientation: landscape) {
+  .hero { min-height: 100vh; }
+  .hero__content { padding-bottom: 4vh; }
+  .scroll-cue { display: none; }
+}
+
+/* En táctil no mostramos la linterna del cursor */
+@media (hover: none) {
+  .flashlight { display: none; }
+}
+
+/* ===================== 11. ACCESIBILIDAD ===================== */
+:focus-visible {
+  outline: 2px solid var(--rust);
+  outline-offset: 4px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+  .reveal { opacity: 1; transform: none; filter: none; }
+  .hero__img { transform: none; }
+}

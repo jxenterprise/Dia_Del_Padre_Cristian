@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#090b0c" />
+  <meta name="description" content="Un homenaje para Cristian en el Día del Padre. De Rossalín, Hardcoryth y Axael. Con todo el cariño." />
+  <title>Feliz Día del Padre · Cristian</title>
+  <link rel="icon" href="img/hero-silent-hill.png" type="image/png" />
+
+  <!-- ===== Fuentes ===== -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700;800&family=Spectral:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Special+Elite&display=swap" rel="stylesheet" />
+
+  <!-- ===== Estilos ===== -->
+  <link rel="stylesheet" href="css/Dia_Del_Padre_Cristian.css" />
+</head>
+
+<body>
+
+  <div class="loader" id="loader" aria-hidden="true">
+    <div class="loader__fog"></div>
+    <p class="loader__text">Silent Hill</p>
+  </div>
+
+  <div class="flashlight" id="flashlight" aria-hidden="true"></div>
+  <div class="grain" aria-hidden="true"></div>
+  <canvas class="ash" id="ash" aria-hidden="true"></canvas>
+
+  <main>
+
+    <header class="hero" id="hero">
+      <div class="hero__media">
+        <img
+          class="hero__img"
+          src="img/hero-silent-hill.png"
+          alt="Calle envuelta en niebla al estilo Silent Hill 2 con la frase Feliz Día del Padre"
+          fetchpriority="high"
+        />
+        <div class="hero__fog hero__fog--1"></div>
+        <div class="hero__fog hero__fog--2"></div>
+        <div class="hero__vignette"></div>
+      </div>
+
+      <div class="hero__content">
+        <p class="eyebrow reveal" data-reveal>Un homenaje envuelto en niebla</p>
+        <h1 class="hero__title reveal" data-reveal>
+          para <span class="hero__name">Cristian</span>
+        </h1>
+        <p class="hero__for reveal" data-reveal data-delay="1">de Rossalín, Hardcoryth y Axael</p>
+      </div>
+
+      <a href="#intro" class="scroll-cue" aria-label="Bajar para leer">
+        <span class="scroll-cue__line"></span>
+        <span class="scroll-cue__text">entra en la niebla</span>
+      </a>
+    </header>
+
+    <section class="intro" id="intro">
+      <div class="wrap">
+        <p class="intro__lead reveal" data-reveal>
+          En este pueblo callado, donde la niebla guarda los recuerdos,
+          tres voces quisieron dejar sus palabras para ti.
+        </p>
+        <p class="intro__sub reveal" data-reveal data-delay="1">
+          No por la sangre, sino por lo que elegimos ser: una familia.
+        </p>
+      </div>
+    </section>
+
+    <section class="letters" id="cartas" aria-label="Cartas para Cristian">
+
+      <article class="letter reveal" data-reveal>
+        <div class="letter__plate">
+          <div class="letter__file">
+            <span class="letter__num">Carta 01</span>
+            <span class="letter__div"></span>
+            <span class="letter__who">De: Rossalín · su esposa</span>
+          </div>
+          <p class="letter__body">
+            Se que soy tu esposa pero quiero decirte con estas palabras que
+            a veces la sangre te hace parientes y no lo es todo en la vida, y
+            que a veces los hijos no se sienten cómodos con quien lo engendra
+            sino con esa persona que en poco tiempo llena el vacío que hay en
+            sus corazones. Es algo extraño y que no sé explicar, pero quiero
+            que sepas que eres el mejor padre del mundo, y si mis hijos se
+            dieron cuenta de eso es porque no me equivoco cuando lo pienso de
+            ti. Somos una familia y espero que sigamos así; mis hijos son
+            tuyos también porque así lo decidimos. De mi parte te amo un
+            montón, y nuevamente gracias por ser ese gran padre que eres.
+          </p>
+          <p class="letter__sign">— Rossalín</p>
+        </div>
+      </article>
+
+      <article class="letter letter--alt reveal" data-reveal>
+        <div class="letter__plate">
+          <div class="letter__file">
+            <span class="letter__num">Carta 02</span>
+            <span class="letter__div"></span>
+            <span class="letter__who">De: Hardcoryth · su hija</span>
+          </div>
+          <p class="letter__body">
+            Feliz Día del Padre. La vida nos ha dado la oportunidad de
+            encontrarnos y conocernos hace poco tiempo. Aunque no compartimos
+            muchos años de recuerdos, en estos meses he podido descubrir a una
+            persona importante en mi vida y comenzar a construir un vínculo
+            que antes no tuvimos.
+          </p>
+          <p class="letter__body">
+            Hoy quiero desearte un feliz Día del Padre y agradecer el esfuerzo
+            de estar aquí, de querer conocernos y de abrir un espacio para
+            compartir momentos juntos. No podemos cambiar el pasado, pero sí
+            valorar las oportunidades que tenemos en el presente.
+          </p>
+          <p class="letter__body">
+            Espero que este sea el comienzo de muchos recuerdos, conversaciones
+            y experiencias que nos permitan seguir acercándonos. Te deseo un
+            día lleno de alegría y de todo el cariño que mereces.
+          </p>
+          <p class="letter__sign">— Hardcoryth</p>
+        </div>
+      </article>
+
+      <article class="letter reveal" data-reveal>
+        <div class="letter__plate">
+          <div class="letter__file">
+            <span class="letter__num">Carta 03</span>
+            <span class="letter__div"></span>
+            <span class="letter__who">De: Axael · su hijo</span>
+          </div>
+          <p class="letter__body">
+            Feliz Día del Padre. Gracias por todos los buenos momentos, los
+            consejos y por ser una gran persona conmigo. Me alegra poder
+            compartir tantas cosas contigo, especialmente nuestra pasión por
+            los videojuegos y la guitarra, esos ratos juntos que se vuelven
+            recuerdos que siempre voy a guardar.
+          </p>
+          <p class="letter__body">
+            Has estado para mí de una forma que vale más que cualquier palabra,
+            y por eso eres muy importante en mi vida y te considero mi verdadero
+            papá. Gracias por enseñarme, por escucharme y por estar siempre
+            presente, incluso en los días grises.
+          </p>
+          <p class="letter__body">
+            Espero que tengas un excelente día, que la pases increíble, y que
+            nunca olvides lo mucho que te quiero.
+          </p>
+          <p class="letter__sign">— Axael</p>
+        </div>
+      </article>
+
+    </section>
+
+    <section class="finale" id="finale" aria-label="Te amamos Cristian">
+      <div class="finale__fog"></div>
+      <div class="finale__inner">
+        <p class="finale__eyebrow reveal" data-reveal>Feliz Día del Padre</p>
+        <h2 class="finale__title" aria-label="Te amamos Cristian">
+          <span class="flicker reveal" data-reveal>Te</span>
+          <span class="flicker reveal" data-reveal data-delay="1">amamos</span>
+          <span class="finale__name flicker reveal" data-reveal data-delay="2">Cristian</span>
+        </h2>
+        <p class="finale__from reveal" data-reveal data-delay="3">
+          Rossalín · Hardcoryth · Axael
+        </p>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="foot">
+    <p class="foot__line">Hecho con cariño · 2026</p>
+    <p class="foot__note">Tributo no comercial inspirado en la estética de Silent Hill 2.</p>
+  </footer>
+
+  <!-- ===== Scripts ===== -->
+  <script src="js/Dia_Del_Padre_Cristian.js"></script>
+</body>
+</html>
