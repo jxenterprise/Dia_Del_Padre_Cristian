@@ -175,21 +175,22 @@
   if (bgMusic) {
     bgMusic.volume = 0.5;
 
-    const tryPlay = () => bgMusic.play().catch(() => {});
-
-    // Intentar autoplay al cargar
-    window.addEventListener("load", tryPlay);
-
-    // Si el navegador bloquea el autoplay, activar en primera interacción
-    const unlockAudio = () => {
-      tryPlay();
-      document.removeEventListener("click", unlockAudio);
-      document.removeEventListener("keydown", unlockAudio);
-      document.removeEventListener("touchstart", unlockAudio);
-    };
-    document.addEventListener("click", unlockAudio);
-    document.addEventListener("keydown", unlockAudio);
-    document.addEventListener("touchstart", unlockAudio, { passive: true });
+    // Truco: empezar muteado (los navegadores permiten autoplay mudo)
+    // y desmutear inmediatamente después — así suena solo al entrar
+    bgMusic.muted = true;
+    bgMusic.play().then(() => {
+      bgMusic.muted = false;
+    }).catch(() => {
+      // Si el navegador bloquea incluso el muted, esperar primera interacción
+      bgMusic.muted = false;
+      const unlock = () => {
+        bgMusic.play().catch(() => {});
+        document.removeEventListener("click", unlock);
+        document.removeEventListener("touchstart", unlock);
+      };
+      document.addEventListener("click", unlock);
+      document.addEventListener("touchstart", unlock, { passive: true });
+    });
 
     // Botón mute/unmute
     if (musicBtn) {
