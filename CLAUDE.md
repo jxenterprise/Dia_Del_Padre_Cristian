@@ -35,6 +35,7 @@ CLAUDE.md                         ← este archivo
 `https://github.com/jxenterprise/Dia_Del_Padre_Cristian.git`
 Rama principal: `main`
 Carpeta local: `C:\Users\jampi\Desktop\prueba de pagina cristian`
+URL pública (GitHub Pages): `https://jxenterprise.github.io/Dia_Del_Padre_Cristian/`
 
 ## Paleta de colores (CSS vars)
 
@@ -91,6 +92,33 @@ Carpeta local: `C:\Users\jampi\Desktop\prueba de pagina cristian`
 | `.grain` (grano película) | 9000 |
 | `.music-btn` (botón mute) | 9500 |
 | `.loader` (pantalla carga) | 9999 |
+
+## Open Graph / Vista previa al compartir
+
+Meta tags añadidos en `<head>` de index.html para WhatsApp, Instagram, etc.:
+- `og:title` → "Feliz Día del Padre · Cristian"
+- `og:description` → frase de la familia
+- `og:image` → imagen hero desde raw.githubusercontent.com
+- `og:url` → URL de GitHub Pages
+- Twitter Card también incluida
+
+**Requiere** que GitHub Pages esté activado para que el link funcione en WhatsApp.
+Para activarlo: repo en GitHub → Settings → Pages → Source: main / (root) → Save.
+
+## Responsive — breakpoints cubiertos
+
+| Rango | Dispositivo |
+|-------|-------------|
+| < 360px | Teléfonos muy pequeños |
+| 360–480px | iPhone SE, teléfonos base |
+| 480–768px | Teléfonos grandes |
+| 768–1024px | Tablets verticales (iPad mini, iPad) |
+| 1024–1280px | iPad Pro, laptops pequeñas |
+| 1280–1536px | Laptops y escritorios |
+| 1536px+ | Pantallas grandes |
+| landscape < 520px alto | Móvil acostado |
+
+Safe area de iPhone (notch / Dynamic Island) cubierta con `env(safe-area-inset-*)`.
 
 ## Notas importantes
 

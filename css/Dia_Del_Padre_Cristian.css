@@ -616,10 +616,20 @@ a { color: inherit; text-decoration: none; }
 
 /* ========================= 10. RESPONSIVE ==================== */
 
-/* Pantallas muy pequeñas (<360px) — apretar un poco más */
+/* Pantallas muy pequeñas (<360px) */
 @media (max-width: 359px) {
   :root { --measure: 90vw; }
   .hero__content { padding-bottom: 10vh; }
+  /* "Cristian" grande en finale: frenar para que no se salga */
+  .finale__name { font-size: clamp(2.8rem, 1.5rem + 9vw, 12rem) !important; }
+  /* Botón música más pequeño para no molestar */
+  .music-btn { width: 2.2rem; height: 2.2rem; bottom: 1rem; right: 1rem; }
+}
+
+/* Móvil base (360px - 480px) */
+@media (min-width: 360px) and (max-width: 479px) {
+  /* Que el texto "de Rossalín, Hardcoryth y Axael" no se corte raro */
+  .hero__for { letter-spacing: 0.12em; }
 }
 
 /* Móvil grande / phablet */
@@ -627,16 +637,18 @@ a { color: inherit; text-decoration: none; }
   .wrap { width: min(100% - 3rem, 1100px); }
 }
 
-/* Tablet vertical y superior */
+/* Tablet vertical (768px - 1023px) */
 @media (min-width: 768px) {
   body { line-height: 1.75; }
   .letter__file { gap: 1.2rem; }
+  /* En tablet las cartas empiezan a alternar levemente */
+  .letter--alt { margin-left: auto; margin-right: 2rem; }
+  .letter:not(.letter--alt) { margin-left: 2rem; margin-right: auto; }
 }
 
 /* Escritorio */
 @media (min-width: 1024px) {
   .hero__content { padding-bottom: 9vh; }
-  /* Las cartas alternan ligeramente su posición horizontal */
   .letter { width: min(100% - 4rem, 760px); }
   .letter--alt { margin-left: auto; margin-right: clamp(0px, 6vw, 120px); }
   .letter:not(.letter--alt) { margin-left: clamp(0px, 6vw, 120px); margin-right: auto; }
@@ -647,16 +659,34 @@ a { color: inherit; text-decoration: none; }
   :root { --measure: 64ch; }
 }
 
-/* Pantallas en horizontal y bajitas (móvil acostado) */
+/* iPad Pro y pantallas grandes (1024px - 1280px) */
+@media (min-width: 1024px) and (max-width: 1280px) {
+  .finale__name { font-size: clamp(5rem, 1.5rem + 9vw, 12rem) !important; }
+}
+
+/* Móvil acostado (landscape corto) */
 @media (max-height: 520px) and (orientation: landscape) {
   .hero { min-height: 100vh; }
   .hero__content { padding-bottom: 4vh; }
   .scroll-cue { display: none; }
+  /* Música más chico para no estorbar en landscape */
+  .music-btn { width: 2rem; height: 2rem; bottom: 0.75rem; right: 0.75rem; }
 }
 
 /* En táctil no mostramos la linterna del cursor */
 @media (hover: none) {
   .flashlight { display: none; }
+}
+
+/* iPhone con notch / Dynamic Island — respetar safe area */
+@supports (padding: max(0px)) {
+  .music-btn {
+    bottom: max(1.5rem, env(safe-area-inset-bottom) + 0.5rem);
+    right:  max(1.5rem, env(safe-area-inset-right)  + 0.5rem);
+  }
+  .foot {
+    padding-bottom: max(4rem, env(safe-area-inset-bottom) + 3rem);
+  }
 }
 
 /* ====================== 11. BOTÓN MÚSICA ==================== */
