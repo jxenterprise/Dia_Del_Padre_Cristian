@@ -168,7 +168,70 @@
     });
   }
 
-  /* ------------------ 6. AUDIO DE FONDO --------------------- */
+  /* ------------------ 6. LLUVIA (CANVAS) -------------------- */
+  const rainCanvas = document.getElementById("rain");
+  if (rainCanvas && !reduceMotion) {
+    const rctx = rainCanvas.getContext("2d");
+    let rw, rh, drops, rdpr;
+
+    const ANGLE = 18 * (Math.PI / 180);
+    const sinA = Math.sin(ANGLE);
+    const cosA = Math.cos(ANGLE);
+
+    function rSize() {
+      rdpr = Math.min(window.devicePixelRatio || 1, 2);
+      rw = rainCanvas.width  = Math.floor(window.innerWidth  * rdpr);
+      rh = rainCanvas.height = Math.floor(window.innerHeight * rdpr);
+      rainCanvas.style.width  = window.innerWidth  + "px";
+      rainCanvas.style.height = window.innerHeight + "px";
+      const count = Math.round((window.innerWidth * window.innerHeight) / 6000);
+      drops = Array.from({ length: Math.min(count, 250) }, makeDrop);
+    }
+
+    function makeDrop() {
+      return {
+        x:     (Math.random() * (rw + rh)) - rh * sinA,
+        y:     Math.random() * rh,
+        len:   (Math.random() * 14 + 8) * rdpr,
+        speed: (Math.random() * 9 + 7) * rdpr,
+        a:     Math.random() * 0.13 + 0.04,
+      };
+    }
+
+    function rTick() {
+      rctx.clearRect(0, 0, rw, rh);
+      rctx.lineWidth = rdpr * 0.6;
+
+      for (const d of drops) {
+        d.x += sinA * d.speed;
+        d.y += cosA * d.speed;
+
+        if (d.y > rh + d.len || d.x > rw + d.len) {
+          d.x = (Math.random() * rw) - rh * sinA;
+          d.y = -d.len;
+        }
+
+        rctx.globalAlpha = d.a;
+        rctx.strokeStyle = "rgba(205,212,213,1)";
+        rctx.beginPath();
+        rctx.moveTo(d.x, d.y);
+        rctx.lineTo(d.x + sinA * d.len, d.y + cosA * d.len);
+        rctx.stroke();
+      }
+      requestAnimationFrame(rTick);
+    }
+
+    rSize();
+    rTick();
+
+    let rResizeT;
+    window.addEventListener("resize", () => {
+      clearTimeout(rResizeT);
+      rResizeT = setTimeout(rSize, 200);
+    });
+  }
+
+  /* ------------------ 7. AUDIO DE FONDO --------------------- */
   const bgMusic = document.getElementById("bgMusic");
   const musicBtn = document.getElementById("musicBtn");
 
